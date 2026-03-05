@@ -1,6 +1,7 @@
 vendor/
 configs/config.yaml
 build/
-logs/
+logs/*
+*.log
 .idea/
 .vscode/
