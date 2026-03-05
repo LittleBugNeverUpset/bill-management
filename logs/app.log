@@ -1,0 +1,3 @@
+2026-03-05T13:25:13.436+0800	INFO	logger/logger.go:81	日志模块初始化完成
+2026-03-05T13:25:13.436+0800	INFO	logger/logger.go:114	程序启动	{"app": "localhost", "port": 8080}
+2026-03-05T13:25:13.436+0800	INFO	logger/logger.go:141	MySQL 配置：localhost:3306
