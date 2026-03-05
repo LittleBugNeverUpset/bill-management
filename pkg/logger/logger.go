@@ -2,7 +2,10 @@ package logger
 
 import (
 	"bill-management/pkg/config"
+	"fmt"
 	"os"
+	"path/filepath"
+	"runtime"
 	"sync"
 
 	"go.uber.org/zap"
@@ -15,6 +18,29 @@ var (
 	sugar  *zap.SugaredLogger
 	once   sync.Once
 )
+
+// getProjectRoot 获取项目根目录的绝对路径
+// 目前工作在 pkg/config/config.go,中，所以需要回退两级到项目根目录
+func getProjectRoot() string {
+	// 获取当前文件（config.go）的绝对路径
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		panic("无法获取当前文件路径")
+	}
+
+	// 向上回溯到项目根目录（当前文件在config目录下，所以需要回退一级）
+	// 如果你的config.go在其他目录，调整filepath.Dir的次数：
+	// 例如：project/cmd/config/config.go → 需要回退2级（filepath.Dir(filepath.Dir(filename))）
+	projectRoot := filepath.Dir(filepath.Dir(filepath.Dir(filename)))
+
+	// 转换为绝对路径（避免符号链接问题）
+	absRoot, err := filepath.Abs(projectRoot)
+	if err != nil {
+		panic(fmt.Errorf("获取项目根目录绝对路径失败: %v", err))
+	}
+
+	return absRoot
+}
 
 func InitLogger() {
 	once.Do(func() {
@@ -52,7 +78,7 @@ func InitLogger() {
 		// 5. 设置日志输出
 		// 5.1 日志切割
 		lumberJackLogger := &lumberjack.Logger{
-			Filename:   cfg.Filename,
+			Filename:   getProjectRoot() + "/" + cfg.Filename,
 			MaxSize:    cfg.MaxSize,
 			MaxBackups: cfg.MaxBackup,
 			MaxAge:     cfg.MaxAge,
