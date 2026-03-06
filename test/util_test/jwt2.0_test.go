@@ -107,6 +107,7 @@ func TestJWTAuthMiddleware_ValidToken(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 	logger.Infof("响应内容: %s", w.Body.String())
 	assert.Contains(t, w.Body.String(), "1001") // 验证UserID正确
+
 	assert.Contains(t, w.Body.String(), "success")
 }
 
@@ -135,6 +136,7 @@ func TestJWTAuthMiddleware_BlacklistedToken(t *testing.T) {
 
 	// 验证结果
 	assert.Equal(t, http.StatusUnauthorized, w.Code)
+	logger.Infof("响应内容: %s", w.Body.String())
 	assert.Contains(t, w.Body.String(), "token 已失效")
 	logger.Infof("响应内容: %s", w.Body.String())
 }

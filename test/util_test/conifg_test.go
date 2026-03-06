@@ -16,7 +16,6 @@ func TestMain(m *testing.M) {
 	config.InitConfig("config") // 加载测试配置
 	logger.InitLogger()         // 初始化日志（依赖配置）
 
-	// ========== 第二步：执行所有测试用例 ==========
 	exitCode := m.Run() // 运行当前包的所有 TestXxx 函数
 
 	// ========== 第三步：测试后清理（可选） ==========

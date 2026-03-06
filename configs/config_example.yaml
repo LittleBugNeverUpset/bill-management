@@ -28,3 +28,9 @@ log:
   max_age: 7           # 日志保留天数
   compress: true       # 是否压缩备份日志
   stdout: true         # 是否同时输出到控制台
+
+JWT:
+  SecretKey: "my_secret_key"
+  ExpireDuration: 3600 # 过期时间，单位为秒
+  Issuer: "my_app"     # 签发者
+  SignMethod: "HS256"  # 签名算法
