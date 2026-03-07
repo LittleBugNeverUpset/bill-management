@@ -65,6 +65,7 @@ func main() {
 
 	// 3.3 注册用户路由
 	router.RegisterUserRouter(r, db, jwtService)
+	router.RegisterBillRouter(r, db, redisClient, jwtService)
 	logger.Info("路由注册完成")
 
 	// ===================== 4. 启动HTTP服务 =====================

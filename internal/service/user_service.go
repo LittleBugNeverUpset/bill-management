@@ -120,7 +120,7 @@ func (s *userService) Login(ctx context.Context, req *model.UserLoginRequest) (s
 	}
 
 	// 5. 生成JWT Token（user.ID是int64，转int传给JWT）
-	token, err := s.jwtService.GenerateToken(int(user.ID), user.Username, user.Role)
+	token, err := s.jwtService.GenerateToken(uint64(user.ID), user.Username, user.Role)
 	if err != nil {
 		logger.Error("登录失败：生成Token出错", zap.Error(err), zap.Int64("user_id", user.ID))
 		return "", errors.New("登录失败：" + err.Error())

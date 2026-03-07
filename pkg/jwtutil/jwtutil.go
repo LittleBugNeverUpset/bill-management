@@ -9,7 +9,7 @@ import (
 )
 
 type CustomClaims struct {
-	UserID               int    `json:"user_id"`
+	UserID               uint64 `json:"user_id"`
 	Username             string `json:"username"`
 	Role                 string `json:"role"`
 	jwt.RegisteredClaims `标准Claims(包含过期时间、签发时间等)`
@@ -38,7 +38,7 @@ func NewJWTService(config *config.Config, storage TokenBlackListStorage) *JWTSer
 	}
 }
 
-func (s *JWTService) GenerateToken(userID int, username, role string) (string, error) {
+func (s *JWTService) GenerateToken(userID uint64, username, role string) (string, error) {
 	claims := CustomClaims{
 		UserID:   userID,
 		Username: username,

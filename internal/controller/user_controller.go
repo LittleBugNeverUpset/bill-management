@@ -5,7 +5,7 @@ import (
 	"bill-management/internal/model"
 	"bill-management/internal/service"
 	"bill-management/pkg/logger"
-	"bill-management/pkg/response"
+	"bill-management/pkg/responseutil"
 
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
@@ -39,7 +39,7 @@ func (c *UserController) Register(ctx *gin.Context) {
 	var req model.UserRegisterRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		logger.Warn("注册接口：参数绑定失败", zap.Error(err))
-		response.Fail(ctx, 400, "参数错误："+err.Error())
+		responseutil.Fail(ctx, 400, "参数错误："+err.Error())
 		return
 	}
 
@@ -47,15 +47,15 @@ func (c *UserController) Register(ctx *gin.Context) {
 	if err := c.userService.Register(ctx.Request.Context(), &req); err != nil {
 		// 业务错误返回400，系统错误返回500
 		if err.Error() == "用户名已存在" || err.Error() == "用户名长度需在3-50位之间" || err.Error() == "密码长度需在6-20位之间" {
-			response.Fail(ctx, 400, err.Error())
+			responseutil.Fail(ctx, 400, err.Error())
 		} else {
-			response.Fail(ctx, 500, err.Error())
+			responseutil.Fail(ctx, 500, err.Error())
 		}
 		return
 	}
 
 	// 3. 返回成功响应
-	response.Success(ctx, "注册成功")
+	responseutil.Success(ctx, "注册成功")
 }
 
 // Login 用户登录接口
@@ -75,7 +75,7 @@ func (c *UserController) Login(ctx *gin.Context) {
 	var req model.UserLoginRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		logger.Warn("登录接口：参数绑定失败", zap.Error(err))
-		response.Fail(ctx, 400, "参数错误："+err.Error())
+		responseutil.Fail(ctx, 400, "参数错误："+err.Error())
 		return
 	}
 
@@ -84,15 +84,15 @@ func (c *UserController) Login(ctx *gin.Context) {
 	if err != nil {
 		// 业务错误返回401，系统错误返回500
 		if err.Error() == "用户名或密码错误" || err.Error() == "用户已被禁用，请联系管理员" || err.Error() == "用户名和密码不能为空" {
-			response.Fail(ctx, 401, err.Error())
+			responseutil.Fail(ctx, 401, err.Error())
 		} else {
-			response.Fail(ctx, 500, err.Error())
+			responseutil.Fail(ctx, 500, err.Error())
 		}
 		return
 	}
 
 	// 3. 返回成功响应（包含Token）
-	response.SuccessWithData(ctx, gin.H{"token": token}, "登录成功")
+	responseutil.SuccessWithData(ctx, gin.H{"token": token}, "登录成功")
 }
 
 // Logout 用户登出接口
@@ -111,7 +111,7 @@ func (c *UserController) Logout(ctx *gin.Context) {
 	authHeader := ctx.GetHeader("Authorization")
 	if authHeader == "" {
 		logger.Warn("登出接口：Authorization头为空")
-		response.Fail(ctx, 401, "未登录")
+		responseutil.Fail(ctx, 401, "未登录")
 		return
 	}
 
@@ -125,16 +125,16 @@ func (c *UserController) Logout(ctx *gin.Context) {
 	}
 	if token == "" {
 		logger.Warn("登出接口：Token为空")
-		response.Fail(ctx, 401, "Token不能为空")
+		responseutil.Fail(ctx, 401, "Token不能为空")
 		return
 	}
 
 	// 2. 调用业务层登出方法
 	if err := c.userService.Logout(ctx.Request.Context(), token); err != nil {
-		response.Fail(ctx, 500, err.Error())
+		responseutil.Fail(ctx, 500, err.Error())
 		return
 	}
 
 	// 3. 返回成功响应
-	response.Success(ctx, "登出成功")
+	responseutil.Success(ctx, "登出成功")
 }
